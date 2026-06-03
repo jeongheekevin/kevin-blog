@@ -3,11 +3,12 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
+const isProd = process.env.NODE_ENV === 'production';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://jeongheekevin.github.io',
-    base: '/kevin-blog',
+    base: isProd ? '/kevin-blog/' : '/',
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
