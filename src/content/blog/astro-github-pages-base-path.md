@@ -2,7 +2,7 @@
 title: "GitHub Pages에 Astro 블로그 배포하기: /blog 링크가 404가 된 이유"
 description: "Astro 블로그를 GitHub Pages project site에 배포하면서 겪은 base path 문제와 해결 과정을 정리했습니다."
 pubDate: "Jun 03 2026"
-heroImage: "../../assets/blog-placeholder-1.jpg"
+#heroImage: "../../assets/blog-placeholder-1.jpg" TODO fix
 ---
 
 ## 시작하며

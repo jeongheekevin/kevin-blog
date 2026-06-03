@@ -34,11 +34,6 @@ https://jeongheekevin.github.io/kevin-blog
 * Feast Registry 운영 경험(링크)
 * CDC 도입 검토 및 아키텍처 비교(링크)
 
-## License
-Content © 2026 Kevin Hwang. All rights reserved.
-Code snippets included in articles may be used for educational and reference purposes.
-
-
 ## 블로그 기술 스택
 
 * Astro
@@ -48,3 +43,7 @@ Code snippets included in articles may be used for educational and reference pur
 
 ## 배포
 GitHub Actions를 이용하여 GitHub Pages에 자동 배포합니다.
+
+## License
+Content © 2026 Kevin Hwang. All rights reserved.
+Code snippets included in articles may be used for educational and reference purposes.
