@@ -27,6 +27,7 @@ https://jeongheekevin.github.io/kevin-blog
 
 
 ## Writing Backlog
+*[GitHub Pages에 Astro 블로그 배포하기](https://jeongheekevin.github.io/kevin-blog/blog/astro-github-pages-base-path)
 * EXPLAIN으로 찾은 인덱스 미사용 원인 분석(링크)
 * JPA N+1 문제 탐지 및 해결(링크)
 * EMR 환경에서 대용량 CSV 업로드 최적화(링크)
