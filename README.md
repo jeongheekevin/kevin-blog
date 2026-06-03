@@ -1,63 +1,49 @@
-# Astro Starter Kit: Blog
+# Kevin Blog
 
-```sh
-npm create astro@latest -- --template blog
-```
+개인 기술 블로그 및 엔지니어링 포트폴리오.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Blog URL
 
-Features:
+https://jeongheekevin.github.io/kevin-blog
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+## 소개
 
-## 🚀 Project Structure
+백엔드, 데이터 플랫폼, 분산 시스템, 클라우드 인프라 운영 과정에서 경험한 문제 해결 사례를 기록합니다.
 
-Inside of your Astro project, you'll see the following folders and files:
+단순 기술 소개보다는 실제 운영 환경에서 발생한 문제를 분석하고 해결한 과정을 중심으로 정리합니다.
 
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
+## 주요 주제
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+* Backend Engineering
+* Data Platform
+* Distributed Systems
+* Apache Spark
+* Apache Kafka
+* Feast
+* Kubernetes
+* AWS
+* Performance Optimization
+* Troubleshooting
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Writing Backlog
+* EXPLAIN으로 찾은 인덱스 미사용 원인 분석(링크)
+* JPA N+1 문제 탐지 및 해결(링크)
+* EMR 환경에서 대용량 CSV 업로드 최적화(링크)
+* Feast Registry 운영 경험(링크)
+* CDC 도입 검토 및 아키텍처 비교(링크)
 
-Any static assets, like images, can be placed in the `public/` directory.
+## License
+Content © 2026 Kevin Hwang. All rights reserved.
+Code snippets included in articles may be used for educational and reference purposes.
 
-## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
+## 블로그 기술 스택
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+* Astro
+* Markdown / MDX
+* GitHub Pages
+* GitHub Actions
 
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## 배포
+GitHub Actions를 이용하여 GitHub Pages에 자동 배포합니다.
