@@ -1,7 +1,8 @@
 ---
 title: "GitHub Pages에 Astro 블로그를 세팅하며 겪은 path와 cache 문제"
 description: "Astro 블로그를 GitHub Pages project site에 배포하면서 로컬과 production의 path 차이, BASE_URL 처리, GitHub Pages 캐시 문제를 정리했습니다."
-pubDate: "Jun 03 2026"
+category: "Blog Engineering"
+pubDate: "2026-06-03T00:00:00+09:00"
 ----------------------
 
 ## TL;DR
@@ -307,6 +308,22 @@ Astro는 `import.meta.env.BASE_URL` 값을 제공합니다.
 
 이 값은 `astro.config.mjs`의 `base` 설정을 반영합니다.
 
+Astro 공식 GitHub Pages 배포 가이드에서도 repository 이름으로 배포되는 project site에서는 `site`와 `base` 설정을 함께 두는 방식을 안내합니다.
+
+이번 블로그처럼 `https://{username}.github.io/{repository-name}/` 형태로 배포된다면 `base`는 선택적인 취향이 아니라 production URL 구조를 반영하는 설정입니다.
+
+```js
+// astro.config.mjs
+export default defineConfig({
+  site: 'https://jeongheekevin.github.io',
+  base: '/kevin-blog',
+});
+```
+
+다만 `base`를 설정했다고 모든 링크가 자동으로 안전해지는 것은 아닙니다.
+
+컴포넌트에서 직접 만든 root-relative link는 여전히 깨질 수 있습니다.
+
 따라서 블로그 목록 페이지에서 다음 변수를 추가했습니다.
 
 ```astro
@@ -404,6 +421,23 @@ const BASE = import.meta.env.BASE_URL;
 
 이제 Header 메뉴 클릭 시에도 `/kevin-blog/` 하위 경로로 이동합니다.
 
+이 active 판단도 완벽한 router는 아닙니다.
+
+`pathname.replace(import.meta.env.BASE_URL, '')`는 현재 URL에서 base prefix를 제거하는 단순한 보정입니다.
+
+이번 블로그처럼 메뉴가 `Home`, `About`, `Blog` 정도이고 경로가 단순하면 충분했습니다.
+
+하지만 다음 조건이 들어오면 더 엄격하게 다뤄야 합니다.
+
+```text
+base path와 비슷한 문자열이 중간 path에 반복되는 경우
+trailing slash 정책이 섞이는 경우
+locale prefix가 붙는 경우
+nested route에서 상위 메뉴 active를 계산해야 하는 경우
+```
+
+그때는 단순 `replace`보다 `new URL(...)`, prefix boundary 확인, trailing slash normalization을 별도로 두는 편이 안전합니다.
+
 ## 5. 문제 2: 삭제한 글이 계속 보였다
 
 ### 5.1 repository에서는 삭제됐지만 운영 페이지에는 남아 있었다
@@ -438,6 +472,25 @@ GitHub Pages는 정적 파일을 CDN을 통해 제공합니다. 또한 브라우
 
 그 결과 배포 직후에는 repository와 build output이 바뀌었더라도, 사용자는 이전 HTML을 잠시 볼 수 있습니다.
 
+여기서 주의할 점은 "GitHub Pages 캐시 TTL은 항상 몇 분이다"처럼 단정하지 않는 것입니다.
+
+GitHub Pages 응답의 `Cache-Control` header는 시점과 파일 종류에 따라 직접 확인하는 편이 안전합니다.
+
+```bash
+curl -I https://jeongheekevin.github.io/kevin-blog/blog/
+```
+
+확인해야 할 값은 다음입니다.
+
+```text
+Cache-Control
+Age
+ETag
+Last-Modified
+```
+
+이 값들을 봐야 현재 브라우저가 오래된 HTML을 보는지, CDN edge가 오래된 응답을 들고 있는지, 아니면 실제 배포 artifact가 오래된 것인지 분리할 수 있습니다.
+
 이번 경우에도 삭제된 Markdown 파일이 다시 생성된 것이 아니라, 이전 `/blog/` HTML을 보고 있었던 것이었습니다.
 
 ### 5.3 캐시 우회 URL로 확인했다
@@ -456,10 +509,34 @@ Cmd + Shift + R
 
 이후 최신 HTML이 반영된 것을 확인했습니다.
 
+하지만 query string이나 강력 새로고침은 "검증을 위한 우회"이지, 모든 캐시 계층의 무효화를 100% 보장하는 배포 전략은 아닙니다.
+
+특히 이미 배포된 HTML 자체가 오래된 asset URL을 가리키고 있다면, query string으로 현재 페이지를 다시 요청해도 사용자가 보는 경로와 완전히 같다고 볼 수 없습니다.
+
+정적 사이트에서는 다음 순서로 확인하는 편이 더 안전합니다.
+
+```text
+1. GitHub Actions deploy가 성공했는가
+2. dist 안에 삭제/수정 결과가 반영됐는가
+3. production URL을 curl -I로 확인했는가
+4. Cache-Control / Age / ETag를 봤는가
+5. 브라우저 강력 새로고침 또는 query string으로 재확인했는가
+```
+
 정적 사이트 배포에서는 캐시 때문에 다음 두 가지를 구분해야 합니다.
 
 ```text
 repository 상태
 build output 상태
-사용자가 보고
+사용자가 보고 있는 HTML 상태
 ```
+
+## References
+
+- [Astro Docs, Deploy your Astro Site to GitHub Pages][astro-github-pages].
+- [GitHub Docs, Configuring a publishing source for your GitHub Pages site][github-pages-source].
+- [MDN, Cache-Control][mdn-cache-control].
+
+[astro-github-pages]: https://docs.astro.build/en/guides/deploy/github/
+[github-pages-source]: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+[mdn-cache-control]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control

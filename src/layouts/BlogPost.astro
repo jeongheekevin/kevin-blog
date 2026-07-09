@@ -8,7 +8,9 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, category, pubDate, updatedDate, heroImage } = Astro.props;
+const BASE = import.meta.env.BASE_URL;
+const categorySlug = category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 ---
 
 <html lang="en">
@@ -52,6 +54,22 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.category {
+				display: inline-block;
+				margin-bottom: 0.8em;
+				padding: 0.2em 0.65em;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 999px;
+				color: rgb(var(--gray-dark));
+				font-size: 0.72em;
+				font-weight: 700;
+				line-height: 1.4;
+				text-decoration: none;
+			}
+			.category:hover {
+				color: var(--accent);
+				border-color: var(--accent);
+			}
 		</style>
 	</head>
 
@@ -74,6 +92,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 								)
 							}
 						</div>
+						<a class="category" href={`${BASE}blog/category/${categorySlug}/`}>{category}</a>
 						<h1>{title}</h1>
 						<hr />
 					</div>

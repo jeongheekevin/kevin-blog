@@ -59,9 +59,18 @@ const { title, description, image = FallbackImage } = Astro.props;
 {
 	import.meta.env.PROD && (
 		<script
-			data-goatcounter="https://kevinblog.goatcounter.com/count"
-			async
-			src="//gc.zgo.at/count.js"
-		/>
+			is:inline
+			set:html={`
+				const allowedHosts = ['jeongheekevin.github.io'];
+
+				if (allowedHosts.includes(window.location.hostname)) {
+					const script = document.createElement('script');
+					script.async = true;
+					script.dataset.goatcounter = 'https://kevinblog.goatcounter.com/count';
+					script.src = '//gc.zgo.at/count.js';
+					document.head.appendChild(script);
+				}
+			`}
+		></script>
 	)
 }

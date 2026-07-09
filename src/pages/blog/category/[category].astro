@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import Header from '../../../components/Header.astro';
+import { SITE_TITLE } from '../../../consts';
+
+export async function getStaticPaths() {
+	const slugify = (value: string) =>
+		value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+	const posts = await getCollection('blog');
+	const categoryMap = new Map<string, typeof posts>();
+
+	for (const post of posts) {
+		const slug = slugify(post.data.category);
+		const existingPosts = categoryMap.get(slug) ?? [];
+		existingPosts.push(post);
+		categoryMap.set(slug, existingPosts);
+	}
+
+	return Array.from(categoryMap.entries()).map(([categorySlug, categoryPosts]) => ({
+		params: { category: categorySlug },
+		props: {
+			category: categoryPosts[0].data.category,
+			posts: categoryPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+		},
+	}));
+}
+
+const { category, posts } = Astro.props;
+const BASE = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`${category} - ${SITE_TITLE}`}
+			description={`${category} category posts from ${SITE_TITLE}`}
+		/>
+		<style>
+			main {
+				width: 840px;
+			}
+			.category-label {
+				display: inline-block;
+				margin-bottom: 0.75rem;
+				padding: 0.2em 0.65em;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 999px;
+				color: rgb(var(--gray-dark));
+				font-size: 0.85em;
+				font-weight: 700;
+				line-height: 1.4;
+			}
+			.posts {
+				display: grid;
+				gap: 1.5rem;
+				list-style: none;
+				margin: 2rem 0 0;
+				padding: 0;
+			}
+			.posts a {
+				display: block;
+				text-decoration: none;
+			}
+			.title {
+				margin: 0;
+				color: rgb(var(--black));
+				line-height: 1.2;
+			}
+			.date {
+				margin: 0.2rem 0 0;
+				color: rgb(var(--gray));
+			}
+			.posts a:hover .title,
+			.posts a:hover .date {
+				color: rgb(var(--accent));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section>
+				<p class="category-label">{category}</p>
+				<h1>{category}</h1>
+				<ul class="posts">
+					{
+						posts.map((post) => (
+							<li>
+								<a href={`${BASE}blog/${post.id}/`}>
+									<h2 class="title">{post.data.title}</h2>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
